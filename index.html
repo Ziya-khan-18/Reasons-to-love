@@ -1068,7 +1068,7 @@
 
     function showNote() {
         const idx = 365 - remaining - 1;
-        document.getElementById('noteTitle').innerText = `Fragment #${String(idx + 1).padStart(3, '0')}`;
+        document.getElementById('noteTitle').innerText = `Reason #${String(idx + 1).padStart(3, '0')}`;
         document.getElementById('noteContent').innerText = reasons[idx % reasons.length];
         noteOverlay.style.display = 'flex';
         gsap.fromTo("#noteCard", { scaleY: 0, rotationX: -100, opacity: 0 }, { scaleY: 1, rotationX: 0, opacity: 1, duration: 1.2, ease: "expo.out" });
@@ -1144,5 +1144,6 @@
 </body>
 
 </html>
+
 
 
