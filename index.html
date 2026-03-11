@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETERNAL — 365 Reasons</title>
+    <!-- GSAP for Professional Motion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:ital,wght@0,300;0,500;1,300&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050a09;
+            --emerald: #10b981;
+            --emerald-dark: #064e3b;
+            --gold: #c5a059;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            cursor: none !important;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0d2d24 0%, #050a09 100%);
+        }
+
+        /* Film Grain Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            left: 0;
+            top: 0;
+            margin-top: -10px;
+            margin-left: -10px;
+            transition: transform 0.1s linear;
+            will-change: transform;
+        }
+
+        #rulesOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050a09;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 4000;
+            opacity: 1;
+        }
+
+        .rulesContent {
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        #rulesTitle {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 12px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        #rulesText {
+            font-size: 1.4rem;
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(10px);
+            font-weight: 300;
+        }
+
+        #rulesText strong {
+            color: var(--emerald);
+            font-weight: 500;
+        }
+
+        #mainContainer {
+            opacity: 0; 
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            perspective: 1500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0; 
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 8vw, 4rem);
+            letter-spacing: 12px;
+            margin: 0;
+            font-weight: 400;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .counter-pill {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+            color: var(--emerald);
+        }
+
+        .jar-scene {
+            position: relative;
+            width: 340px;
+            height: 480px;
+            perspective: 2000px;
+            opacity: 0;
+            transform: translateY(20px);
+            will-change: transform;
+            cursor: pointer !important;
+        }
+
+        .jar-motion {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .jar-3d {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            backface-visibility: hidden; 
+        }
+
+        .paper-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 60px 60px 140px 140px;
+            z-index: 1;
+        }
+
+        .jar-glass {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 60px 60px 140px 140px;
+            overflow: hidden;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.35) 0%,
+                rgba(255, 255, 255, 0.12) 12%,
+                rgba(255, 255, 255, 0.05) 30%,
+                rgba(255, 255, 255, 0.03) 50%,
+                rgba(255, 255, 255, 0.05) 70%,
+                rgba(255, 255, 255, 0.12) 88%,
+                rgba(255, 255, 255, 0.35) 100%
+            );
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow:
+                inset 0 0 60px rgba(255, 255, 255, 0.12),
+                inset 0 -40px 60px rgba(0, 0, 0, 0.15),
+                0 30px 80px rgba(0, 0, 0, 0.45);
+            transform: translateZ(100px); 
+            backface-visibility: hidden;
+            z-index: 2;
+        }
+
+        .jar-glow {
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 55%;
+            background: radial-gradient(
+                circle at center,
+                rgba(16,255,140,0.9),
+    		rgba(16,185,129,0.6),
+    		rgba(16,185,129,0.2),
+                transparent
+            );
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .jar-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 60px 60px 140px 140px;
+            transform: rotateY(180deg) translateZ(-60px);
+        }
+
+        .jar-lid {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) translateZ(110px);
+            transform-style: preserve-3d;
+            width: 210px;
+            height: 50px;
+            background: linear-gradient(to right, #111, #333, #111);
+            border-radius: 14px;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .paper-scrap {
+            position: absolute;
+            width: 48px; 
+            height: 60px; 
+            border-radius: 4px;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+            will-change: transform;
+            border: 0.5px solid rgba(0,0,0,0.05);
+            pointer-events: none;
+        }
+
+        .note-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 10, 9, 0.98);
+            display: none;
+            z-index: 500;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            perspective: 2000px;
+        }
+
+        .note-card {
+            background: white;
+            color: #1a1a1a;
+            width: 90%;
+            max-width: 750px; 
+            min-height: 500px; 
+            padding: 80px 60px;
+            position: relative;
+            box-shadow: 0 50px 150px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        #noteTitle {
+            font-family: 'Cinzel', serif; 
+            font-size: 0.9rem; 
+            color: #064e3b; 
+            letter-spacing: 6px; 
+            margin-bottom: 40px; 
+            text-transform: uppercase; 
+        }
+
+        #noteContent {
+            font-size: clamp(1.5rem, 4vw, 2.2rem); 
+            line-height: 1.4;
+            font-weight: 300;
+            font-style: italic;
+            text-align: center;
+            color: #333;
+        }
+
+        #finalOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #050a09;
+        }
+	#finalTitle{
+    		font-family:'Cinzel', serif;
+    		letter-spacing:12px;
+   		 margin-bottom:30px;
+    		opacity:0;
+    		transform:translateY(10px);
+	}
+
+	#finalText{
+    		font-size:1.4rem;
+    		line-height:1.7;
+    		font-weight:300;
+    		opacity:0;
+    		transform:translateY(10px);
+	}
+
+        .hint {
+            position:absolute; 
+            bottom:-60px; 
+            left:50%; 
+            transform:translateX(-50%); 
+            font-size:0.7rem; 
+            letter-spacing:4px; 
+            opacity:0.4;
+            white-space: nowrap;
+        }
+	#copyright{
+    	    position: fixed;
+            bottom: 12px;
+    	    left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            opacity: 0.35;
+    	    color: #a7f3d0;
+            pointer-events: none;
+            text-align: center;
+            white-space: nowrap;
+	}
+	#welcomeOverlay{
+    		position:fixed;
+    		top:0;
+    		left:0;
+    		width:100%;
+    		height:100%;
+    		background:#050a09;
+    		display:flex;
+    		justify-content:center;
+    		align-items:center;
+    		text-align:center;
+    		z-index:5000;
+	}
+
+	.welcomeContent{
+    		max-width:650px;
+    		padding:40px;
+	}
+
+	#welcomeTitle{
+    		font-family:'Cinzel',serif;
+    		letter-spacing:12px;
+    		margin-bottom:30px;
+	}
+
+	#welcomeText{
+    		font-size:1.3rem;
+    		line-height:1.7;
+    		font-weight:300;
+	}
+
+	#enterButton{
+    		margin-top:40px;
+    		padding:12px 30px;
+    		border-radius:30px;
+   		border:1px solid rgba(255,255,255,0.2);
+   		background:transparent;
+    		color:#a7f3d0;
+    		font-size:0.8rem;
+   		letter-spacing:3px;
+    		cursor:pointer;
+	}
+	#welcomeTitle,
+	#welcomeText,
+	#enterButton{
+    		opacity:0;
+    		transform:translateY(10px);
+	}
+    </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="welcomeOverlay">
+    <div class="welcomeContent">
+        <h2 id="welcomeTitle">WELCOME</h2>
+        <p id="welcomeText">
+            This is a jar filled with <strong>365 reasons</strong> why I love you.<br><br>
+            Each day, open one note and discover another small piece of my heart.
+        </p>
+
+        <button id="enterButton">Begin</button>
+    </div>
+</div>
+<div id="rulesOverlay">
+    <div class="rulesContent">
+        <h2 id="rulesTitle">RULES</h2>
+        <p id="rulesText">
+            Open <strong>one note each day</strong>.<br>
+            There are 365 fragments inside this jar.<br>
+            One for every day.
+        </p>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    <div class="header" id="mainHeader">
+        <h1>ETERNAL</h1>
+        <div class="counter-pill" id="counter">365 FRAGMENTS REMAINING</div>
+    </div>
+
+    <div class="jar-scene" id="jarScene">
+        <div class="jar-motion" id="jarMotion">
+            <div class="jar-3d" id="jar3D">
+                <div class="jar-glow"></div>
+                <div class="paper-container" id="paperContainer"></div>
+                <div class="jar-lid" id="jarLid"></div>
+                <div class="jar-back"></div>
+                <div class="jar-glass" id="jarBody"></div>
+            </div>
+        </div>
+        <div class="hint" id="interactionHint">CLICK THE JAR TO EXTRACT A REASON</div>
+    </div>
+</div>
+
+<div class="note-overlay" id="noteOverlay" onclick="closeNote()">
+    <div class="note-card" id="noteCard">
+        <h2 id="noteTitle">Fragment #001</h2>
+        <p id="noteContent"></p>
+        <div style="margin-top:60px; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; color:#999; transform:translateZ(10px);">
+            <span>Click anywhere to continue</span>
+        </div>
+    </div>
+</div>
+<div id="finalOverlay">
+    <div class="rulesContent">
+        <h2 id="finalTitle">365 FRAGMENTS LATER</h2>
+        <p id="finalText">
+            And even after all of them...<br>
+            I still haven't run out of reasons to love you.
+        </p>
+    </div>
+</div>
+<div id="copyright">
+    © 2026 — Made for Nir.
+</div>
+
+<script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playPopSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    const jarScene = document.getElementById('jarScene');
+    const jar3D = document.getElementById('jar3D');
+    const paperContainer = document.getElementById('paperContainer');
+    const counter = document.getElementById('counter');
+    const noteOverlay = document.getElementById('noteOverlay');
+    const cursor = document.getElementById('cursor');
+
+    const greenShades = ['#d1fae5', '#a7f3d0', '#dcfce7', '#bbf7d0', '#ecfdf5', '#f0fdf4'];
+    const reasons = [
+
+"I love how we found each other when we least expected it.",
+"I love how our story started with a simple conversation.",
+"I love how easy it was to talk to you from the beginning.",
+"I love how you made me feel comfortable right away.",
+"I love how you became important to me so quickly.",
+"I love how every message from you made me smile.",
+"I love how curious I was to know more about you.",
+"I love how natural our connection felt.",
+"I love how we kept finding new things to talk about.",
+"I love how you made ordinary days feel exciting.",
+"I love how we slowly became part of each other's daily lives.",
+"I love how talking to you became my favorite part of the day.",
+"I love how our conversations never felt forced.",
+"I love how we could talk about anything.",
+"I love how you made me feel heard.",
+"I love how you listened to me without judging.",
+"I love how you respected my thoughts.",
+"I love how you cared about my feelings.",
+"I love how you made me feel valued.",
+"I love how you were patient with me.",
+"I love how we built our connection step by step.",
+"I love how you stayed genuine from the start.",
+"I love how you always spoke honestly with me.",
+"I love how you made me laugh during our conversations.",
+"I love how your personality shined through every message.",
+"I love how we slowly started trusting each other.",
+"I love how we supported each other from afar.",
+"I love how we kept choosing each other every day.",
+"I love how our connection kept growing.",
+"I love how everything between us felt real.",
+
+"I love waking up and seeing your message.",
+"I love how you always check on me.",
+"I love how you ask about my day.",
+"I love how you remember the small details about me.",
+"I love how we can talk for hours without getting bored.",
+"I love how you make me laugh even through a screen.",
+"I love how your words brighten my day.",
+"I love how your voice calms me.",
+"I love how your presence makes everything better.",
+"I love how you bring peace to my mind.",
+"I love how you understand my moods.",
+"I love how you notice when something is wrong.",
+"I love how you try to cheer me up.",
+"I love how you comfort me even from far away.",
+"I love how you always try to make me smile.",
+"I love how you encourage me when I feel doubtful.",
+"I love how you believe in me.",
+"I love how you remind me of my strengths.",
+"I love how you motivate me to keep going.",
+"I love how you support my dreams.",
+"I love how we can be silly together.",
+"I love how we laugh at the same things.",
+"I love how we share random thoughts.",
+"I love how we send each other things that remind us of each other.",
+"I love how you make ordinary conversations special.",
+"I love how we can be weird together.",
+"I love how we share jokes only we understand.",
+"I love how you never judge me.",
+"I love how you accept me completely.",
+"I love how you make me feel safe emotionally.",
+"I love how you stay kind even when things are hard.",
+"I love how you stay patient with me.",
+"I love how thoughtful you are.",
+"I love how caring you are.",
+"I love how genuine you are.",
+"I love how honest you are.",
+"I love how supportive you are.",
+"I love how strong you are.",
+"I love how compassionate you are.",
+"I love how positive you are.",
+"I love how you brighten my worst days.",
+"I love how you calm my worries.",
+"I love how you help me see things differently.",
+"I love how you remind me to stay hopeful.",
+"I love how you make my days better.",
+"I love how you make life feel lighter.",
+"I love how you bring warmth into my life.",
+"I love how you bring joy into my thoughts.",
+"I love how you bring peace to my heart.",
+"I love how you make everything feel possible.",
+"I love how we share our dreams.",
+"I love how we talk about our future.",
+"I love how we imagine meeting one day.",
+"I love how we make plans together.",
+"I love how we dream about traveling together.",
+"I love how we imagine little moments together.",
+"I love how we talk about our future home.",
+"I love how we dream about our life together.",
+"I love how thinking about that future makes me happy.",
+"I love how we believe in that future.",
+
+"I love how distance has made our bond stronger.",
+"I love how miles never stopped us from caring.",
+"I love how we stay connected every day.",
+"I love how we make time for each other.",
+"I love how distance never changed how I feel about you.",
+"I love how we choose each other despite the miles.",
+"I love how we make long distance work.",
+"I love how we stay loyal to each other.",
+"I love how we trust each other completely.",
+"I love how we stay patient while waiting to meet.",
+"I love how waiting makes our meeting more special.",
+"I love how we never gave up on each other.",
+"I love how you stayed by my side this whole year.",
+"I love how we stayed strong together.",
+"I love how our love grew through distance.",
+"I love how we stayed connected through messages.",
+"I love how we stayed connected through calls.",
+"I love how we stayed connected through shared moments.",
+"I love how you make distance feel smaller.",
+"I love how you make waiting worth it.",
+
+"I love your kindness.",
+"I love your patience.",
+"I love your honesty.",
+"I love your loyalty.",
+"I love your compassion.",
+"I love your creativity.",
+"I love your intelligence.",
+"I love your humor.",
+"I love your positivity.",
+"I love your curiosity.",
+"I love your thoughtful nature.",
+"I love your determination.",
+"I love your courage.",
+"I love your optimism.",
+"I love your sincerity.",
+"I love your warmth.",
+"I love your generosity.",
+"I love your understanding.",
+"I love your maturity.",
+
+"I love how you make my life better.",
+"I love how you make my days brighter.",
+"I love how you make my heart feel full.",
+"I love how you make my thoughts calmer.",
+"I love how you make me feel understood.",
+"I love how you make me feel valued.",
+"I love how you make me feel loved.",
+"I love how you make me feel lucky.",
+"I love how you make me feel hopeful.",
+"I love how you make me feel at peace.",
+"I love how you are always on my mind.",
+"I love how you are the first person I want to talk to.",
+"I love how you are the last person I think about before sleeping.",
+"I love how you make the future exciting.",
+"I love how loving you feels natural.",
+"I love how loving you feels effortless.",
+"I love how loving you feels right.",
+"I love how loving you changed my life.",
+"I love how loving you changed me.",
+"I love how loving you made my world brighter.",
+"I love how our story keeps growing.",
+"I love how our connection feels rare.",
+"I love how our bond feels strong.",
+"I love how our love feels genuine.",
+"I love how our love keeps deepening.",
+"I love how our love keeps inspiring me.",
+"I love how our love keeps giving me hope.",
+"I love how our love grows stronger.",
+"I love how our love feels timeless.",
+"I love how lucky I am to have you.",
+"I love how special you are to me.",
+"I love how important you are to my life.",
+"I love how meaningful our relationship is.",
+"I love how our connection feels unique.",
+"I love how we found each other in this big world.",
+"I love how our story is still unfolding.",
+"I love how loving you feels like home.",
+"I love how being with you feels right.",
+"I love how our love feels real.",
+"I love how every day with you matters.",
+"I love how every conversation with you matters.",
+"I love how every memory with you matters.",
+"I love how every moment with you matters.",
+"I love how every day I love you more.",
+"I love how our journey is just beginning.",
+"I love how our love continues to grow.",
+"I love how you make everything better.",
+"I love how you make life meaningful.",
+"I love how you make my heart happy.",
+"I love how loving you feels endless.",
+"I love how loving you feels magical.",
+"I love how loving you feels peaceful.",
+"I love how loving you feels exciting.",
+"I love how loving you feels beautiful.",
+"I love how you changed my life for the better.",
+"I love how you make me believe in love.",
+"I love how you make the future worth waiting for.",
+"I love how you make distance feel temporary.",
+"I love how loving you feels like destiny.",
+"I love how our hearts found each other.",
+"I love how our connection feels unbreakable.",
+"I love how our love grows every day.",
+"I love how lucky I am to call you mine.",
+"I love you simply because you are you.",
+"I love how your messages can change my whole mood.",
+"I love how you always try to understand me.",
+"I love how you notice the small things about me.",
+"I love how you make silence feel comfortable.",
+"I love how you bring calm into my life.",
+"I love how you remind me to stay strong.",
+"I love how you never stop caring.",
+"I love how you make the distance feel lighter.",
+"I love how you always try to make things better.",
+"I love how you make me feel appreciated.",
+"I love how you remember the little details.",
+"I love how you respect my thoughts.",
+"I love how you make conversations feel effortless.",
+"I love how you make even ordinary talks meaningful.",
+"I love how you always check on me.",
+"I love how you make me feel seen.",
+"I love how you listen with patience.",
+"I love how you bring comfort into my day.",
+"I love how you stay calm during difficult moments.",
+"I love how you bring balance into my life.",
+"I love how you always try your best.",
+"I love how you make every conversation interesting.",
+"I love how you make me feel important.",
+"I love how you stay thoughtful.",
+"I love how you make every day feel brighter.",
+"I love how you bring warmth into every conversation.",
+"I love how you stay understanding.",
+"I love how you always encourage me.",
+"I love how you remind me that things will be okay.",
+"I love how you stay kind no matter what.",
+
+"I love how your presence feels comforting.",
+"I love how you bring peace into my thoughts.",
+"I love how you make time feel valuable.",
+"I love how you make everything feel possible.",
+"I love how you make worries feel smaller.",
+"I love how you stay positive even during hard days.",
+"I love how you stay supportive.",
+"I love how you remind me of the good in life.",
+"I love how you make difficult moments easier.",
+"I love how you bring joy into my days.",
+"I love how you make everything feel lighter.",
+"I love how you stay caring.",
+"I love how you make life feel meaningful.",
+"I love how you bring calm into chaos.",
+"I love how you stay patient with everything.",
+"I love how you stay thoughtful about small things.",
+"I love how you make happiness feel simple.",
+"I love how you stay loyal.",
+"I love how you make love feel safe.",
+"I love how you stay genuine.",
+"I love how you bring positivity into my life.",
+"I love how you make time together feel special.",
+"I love how you make every moment count.",
+"I love how you bring warmth into my world.",
+"I love how you stay honest with me.",
+"I love how you make everything feel worth it.",
+"I love how you stay attentive.",
+"I love how you bring light into my life.",
+"I love how you make everything feel brighter.",
+"I love how you bring comfort into my heart.",
+
+"I love how you make the future feel exciting.",
+"I love how you make waiting feel worthwhile.",
+"I love how you make distance feel temporary.",
+"I love how you stay hopeful about us.",
+"I love how you believe in our story.",
+"I love how you trust what we have.",
+"I love how you stay committed.",
+"I love how you keep showing up for us.",
+"I love how you stay strong even through distance.",
+"I love how you make long distance feel possible.",
+"I love how you make our connection feel strong.",
+"I love how you keep choosing me.",
+"I love how you make every day feel closer to you.",
+"I love how you make time feel meaningful.",
+"I love how you stay patient while we wait.",
+"I love how you make our future feel real.",
+"I love how you keep believing in us.",
+"I love how you stay dedicated.",
+"I love how you never stop caring about us.",
+"I love how you keep our connection alive.",
+
+"I love how you make me feel calm.",
+"I love how you make me feel valued.",
+"I love how you make me feel respected.",
+"I love how you make me feel appreciated.",
+"I love how you make me feel understood.",
+"I love how you make me feel heard.",
+"I love how you make me feel important.",
+"I love how you make me feel supported.",
+"I love how you make me feel comfortable.",
+"I love how you make me feel confident.",
+"I love how you make me feel strong.",
+"I love how you make me feel peaceful.",
+"I love how you make me feel happy.",
+"I love how you make me feel lucky.",
+"I love how you make me feel hopeful.",
+"I love how you make me feel excited.",
+"I love how you make me feel safe.",
+"I love how you make me feel calm inside.",
+"I love how you make me feel inspired.",
+"I love how you make me feel loved.",
+
+"I love how you make life feel fuller.",
+"I love how you make everything more meaningful.",
+"I love how you make the world feel kinder.",
+"I love how you make love feel simple.",
+"I love how you make every day feel special.",
+"I love how you bring meaning into my days.",
+"I love how you bring purpose into my life.",
+"I love how you bring warmth into my heart.",
+"I love how you bring joy into ordinary moments.",
+"I love how you make every memory special.",
+"I love how you make life feel beautiful.",
+"I love how you make everything feel brighter.",
+"I love how you bring happiness into my life.",
+"I love how you bring calm into my mind.",
+"I love how you make love feel natural.",
+"I love how you make love feel real.",
+"I love how you make love feel peaceful.",
+"I love how you make love feel magical.",
+"I love how you make love feel effortless.",
+"I love how you make love feel endless.",
+
+"I love how you make our story meaningful.",
+"I love how you make our connection unique.",
+"I love how you make our bond stronger.",
+"I love how you make our journey special.",
+"I love how you make our relationship beautiful.",
+"I love how you make our future exciting.",
+"I love how you make our love grow.",
+"I love how you make our connection deeper.",
+"I love how you make our relationship feel safe.",
+"I love how you make our love feel timeless.",
+"I love how you make our bond feel rare.",
+"I love how you make our connection feel unbreakable.",
+"I love how you make our love feel genuine.",
+"I love how you make our story worth telling.",
+"I love how you make every moment with you meaningful.",
+"I love how you make every day together matter.",
+"I love how you make our memories unforgettable.",
+"I love how you make our connection feel special.",
+"I love how you make loving you easy.",
+"I love how you make my life better every day.",
+
+"I love how you are simply yourself.",
+"I love how you stay true to who you are.",
+"I love how you bring authenticity into everything.",
+"I love how you stay sincere.",
+"I love how you stay kind.",
+"I love how you stay thoughtful.",
+"I love how you stay compassionate.",
+"I love how you stay genuine.",
+"I love how you stay caring.",
+"I love how you stay patient.",
+"I love how you stay understanding.",
+"I love how you stay loyal.",
+"I love how you stay supportive.",
+"I love how you stay strong.",
+"I love how you stay optimistic.",
+"I love how you stay hopeful.",
+"I love how you stay positive.",
+"I love how you stay honest.",
+"I love how you stay loving.",
+"I love how you stay you."
+
+];
+    let remaining = localStorage.getItem("jarRemaining")
+	? parseInt(localStorage.getItem("jarRemaining"))
+	: 365;
+    let paperElements = [];
+    let activeParallaxItems = [];
+    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+    const lerpAmount = 0.08; 
+    let mouseX = 0, mouseY = 0, heldPaper = null;
+
+    document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        const centerX = window.innerWidth / 2, centerY = window.innerHeight / 2;
+        targetY = ((mouseX - centerX) / centerX) * 15;
+        targetX = -((mouseY - centerY) / centerY) * 15;
+
+        if (noteOverlay.style.display === 'flex') {
+            const rect = noteOverlay.getBoundingClientRect();
+            gsap.to("#noteCard", { rotationY: ((mouseX - rect.width/2)/rect.width)*15, rotationX: -((mouseY - rect.height/2)/rect.height)*15, duration: 0.6 });
+        }
+    });
+
+    jarScene.addEventListener("click", () => handleJarInteraction());
+
+    gsap.ticker.add(() => {
+        currentX += (targetX - currentX) * lerpAmount;
+        currentY += (targetY - currentY) * lerpAmount;
+        gsap.set("#jar3D", { rotationX: currentX, rotationY: currentY });
+        
+        activeParallaxItems.forEach(item => {
+            gsap.set(item.el, {
+                x: item.baseX + ((currentY / 12) * item.depth),
+                y: item.baseY + ((-currentX / 12) * item.depth),
+                z: item.zDepth
+            });
+        });
+    });
+    document.getElementById("enterButton").onclick = () => {
+    gsap.to("#welcomeOverlay", {
+        opacity:0,
+        duration:1,
+        onComplete:()=>{
+            document.getElementById("welcomeOverlay").style.display="none";
+        }
+    });
+};
+	window.onload = () => {
+
+    const welcomeTL = gsap.timeline();
+
+    welcomeTL.to("#welcomeTitle", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8
+    });
+
+    welcomeTL.to("#welcomeText", {
+        opacity: 1,
+        y: 0,
+        duration: 0.5
+    }, "-=0.01");
+
+    welcomeTL.fromTo("#enterButton",
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.6 }
+    );
+
+    document.getElementById("enterButton").onclick = () => {
+
+        gsap.to("#welcomeOverlay", {
+            opacity: 0,
+            duration: 1,
+            onComplete: () => {
+                document.getElementById("welcomeOverlay").style.display = "none";
+            }
+        });
+
+        const tl = gsap.timeline({ delay: 0.8 });
+
+        tl.to("#rulesTitle", { opacity: 1, y: 0, duration: 0.8 });
+        tl.to("#rulesText", { opacity: 1, y: 0, duration: 0.5 }, "-=0.01");
+        tl.to({}, { duration: 3 });
+        tl.to("#rulesOverlay", { opacity: 0, duration: 1 });
+        tl.to("#mainContainer", { opacity: 1, duration: 1 });
+        tl.set("#rulesOverlay", { display: "none" });
+        tl.to("#mainHeader", { opacity: 1, y: 0, duration: 1.2 });
+        tl.to("#jarScene", { opacity: 1, y: 0, duration: 1.2 }, "-=0.8");
+        tl.to("#jarMotion", { y: -8, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut" }, "-=1");
+
+        initJar();
+
+        counter.innerText =
+        remaining === 0
+        ? "THE LAST FRAGMENT"
+        : `${remaining} FRAGMENTS REMAINING`;
+    };
+
+};
+
+    function initJar(isReset = false) {
+        const visualPaperCount = 365;
+        const jarWidth = 340;
+        const jarCenter = jarWidth / 2; 
+
+        paperContainer.innerHTML = '';
+        paperElements = [];
+        activeParallaxItems = [];
+
+        for (let i = 0; i < visualPaperCount; i++) {
+            const scrap = document.createElement('div');
+            scrap.className = 'paper-scrap';
+            scrap.style.backgroundColor = greenShades[Math.floor(Math.random() * greenShades.length)];
+            
+            const layer = Math.floor(i / 12); 
+            const baseY = 300 + (layer * 10) + gsap.utils.random(-4, 4); 
+            const yRatio = (baseY - 200) / 280; 
+            
+            const jarRadius = 150 - (yRatio * 20); 
+            const baseX = jarCenter + gsap.utils.random(-jarRadius, jarRadius);
+
+            const rotation = gsap.utils.random(-45, 45);
+            const depth = gsap.utils.random(-15, 15);
+            const zDepth = (layer * 3) + gsap.utils.random(-2, 2);
+           
+            paperContainer.appendChild(scrap);
+            
+            const paperObj = { el: scrap, baseX, baseY, depth, zDepth };
+            paperElements.push(paperObj);
+            if (i % 5 === 0) activeParallaxItems.push(paperObj);
+        }
+	gsap.fromTo(".paper-scrap",
+	{
+   		x: () => gsap.utils.random(-120,460),
+    		y: -420,
+    		rotation: () => gsap.utils.random(-180,180),
+    		opacity:0
+	},
+	{
+    		x:(i)=>paperElements[i].baseX,
+    		y:(i)=>paperElements[i].baseY,
+    		rotation: () => gsap.utils.random(-45,45),
+    		opacity:1,
+    		duration:2.2,
+    		ease:"power3.out",
+    		stagger:0.002,
+    		delay:isReset?0.5:0
+	});
+    }
+
+    function handleJarInteraction() {
+        if (remaining <= 0 && !heldPaper) {
+    	showFinalScene();
+    	return;
+	}
+
+        playPopSound(); 
+        gsap.fromTo(".jar-glow", { scale: 1, opacity: 0.5 }, { scale: 1.4, opacity: 1, duration: 0.4, yoyo: true, repeat: 1 });
+        gsap.to("#jar3D", { rotationZ: "+=6", duration: 0.08, repeat: 5, yoyo: true, ease: "power1.inOut" });
+
+        heldPaper = document.createElement('div');
+        heldPaper.className = 'paper-scrap';
+        heldPaper.style.cssText = `position:fixed; left:0; top:0; width:70px; height:90px; z-index:1000; background:${greenShades[0]}; pointer-events:none; border: 1px solid rgba(0,0,0,0.1);`;
+        document.body.appendChild(heldPaper);
+
+        gsap.fromTo(heldPaper, 
+            { x: mouseX - 35, y: mouseY + 150, scale: 0.4, rotation: 0, opacity: 0 },
+            { x: mouseX - 35, y: mouseY - 45, scale: 1.3, rotation: 12, opacity: 1, duration: 0.6, ease: "back.out(1.4)" }
+        );
+
+        gsap.delayedCall(0.8, () => {
+            if (!heldPaper) return;
+            gsap.to(heldPaper, { scale: 5, opacity: 0, duration: 0.7, ease: "power3.inOut", onComplete: () => {
+                heldPaper.remove();
+                heldPaper = null;
+                showNote();
+            }});
+        });
+
+        remaining--;
+	localStorage.setItem("jarRemaining", remaining);
+        counter.innerText = remaining === 0 ? "THE LAST REASON" : `${remaining} REASONS REMAINING`;
+        
+        if (paperElements.length > 0) {
+            const target = paperElements.pop();
+            activeParallaxItems = activeParallaxItems.filter(item => item !== target);
+            gsap.to(target.el, { scale: 0, opacity: 0, duration: 0.4, onComplete: () => target.el.remove() });
+        }
+    }
+
+    function showNote() {
+        const idx = 365 - remaining - 1;
+        document.getElementById('noteTitle').innerText = `Fragment #${String(idx + 1).padStart(3, '0')}`;
+        document.getElementById('noteContent').innerText = reasons[idx % reasons.length];
+        noteOverlay.style.display = 'flex';
+        gsap.fromTo("#noteCard", { scaleY: 0, rotationX: -100, opacity: 0 }, { scaleY: 1, rotationX: 0, opacity: 1, duration: 1.2, ease: "expo.out" });
+    }
+
+    function closeNote() {
+        gsap.to("#noteCard", { scale: 0.8, opacity: 0, duration: 0.4, onComplete: () => noteOverlay.style.display = 'none' });
+    }
+    function showFinalScene(){
+
+	const tl = gsap.timeline();
+
+	tl.to(".jar-glow",{
+    	scale:2.5,
+    	opacity:1,
+    	duration:1.2,
+    	ease:"power2.out"
+	});
+
+	tl.to("#jarMotion",{
+    	y:-30,
+    	duration:1.6
+	},"-=1");
+
+	tl.to("#mainHeader",{opacity:0,duration:1},"-=1");
+
+	tl.to("#jarScene",{
+    	scale:1.3,
+    	opacity:0,
+    	duration:1.5,
+    	ease:"power3.inOut"
+	});
+
+	tl.to("body",{
+    	background:"radial-gradient(circle at center,#0f3f33,#021a14)",
+    	duration:2
+   	});
+
+	tl.set("#finalOverlay",{display:"flex"});
+
+	tl.to("#finalOverlay",{opacity:1,duration:1});
+
+	tl.to("#finalTitle",{opacity:1,y:0,duration:0.8});
+
+	tl.to("#finalText",{opacity:1,y:0,duration:0.6},"-=0.3");
+
+	/* restart after a few seconds */
+
+	tl.to({},{
+    	duration:4,
+    	onComplete:restartJar
+	});
+
+    }
+    function restartJar(){
+
+	remaining = 365;
+	localStorage.setItem("jarRemaining", remaining);
+
+	counter.innerText = "365 REASONS REMAINING";
+
+	gsap.set("#finalOverlay",{opacity:0,display:"none"});
+
+	gsap.set("#jarScene",{opacity:1,scale:1});
+	gsap.set("#mainHeader",{opacity:1});
+
+	gsap.set(".jar-glow",{scale:1,opacity:0.6});
+
+	initJar(true);
+
+    }
+</script>
+</body>
+</html>
