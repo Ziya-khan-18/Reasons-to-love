@@ -1020,14 +1020,25 @@
         ? "THE LAST REASON"
         : `${remaining} REASONS REMAINING`;
 
-    // 🎵 Start music
-    music.play().then(() => {
-        isPlaying = true;
-        musicButton.classList.remove("playing");
-    }).catch(() => {
-        console.log("Autoplay blocked");
-    });
+// 🎵 Start music (FINAL FIX)
+audioCtx.resume();
 
+music.currentTime = 0;
+music.volume = 1;
+
+const playPromise = music.play();
+
+if (playPromise !== undefined) {
+    playPromise
+        .then(() => {
+            isPlaying = true;
+            musicButton.classList.remove("playing");
+            console.log("Music started");
+        })
+        .catch((error) => {
+            console.log("Playback blocked ❌", error);
+        });
+}
 });
     function initJar(isReset = false) {
         const visualPaperCount = 365;
