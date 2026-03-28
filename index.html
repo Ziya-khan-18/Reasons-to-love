@@ -561,7 +561,6 @@
 </audio>
 
 <script>
-<script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playPopSound() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -988,45 +987,28 @@
             });
         });
     });
-    document.getElementById("enterButton").onclick = () => {
+    const enterBtn = document.getElementById("enterButton");
+
+enterBtn.addEventListener("click", () => {
+
+    // existing animation
     gsap.to("#welcomeOverlay", {
-        opacity:0,
-        duration:1,
-        onComplete:()=>{
-            document.getElementById("welcomeOverlay").style.display="none";
+        opacity: 0,
+        duration: 1,
+        onComplete: () => {
+            document.getElementById("welcomeOverlay").style.display = "none";
         }
     });
-};
-	window.onload = () => {
 
-    const welcomeTL = gsap.timeline();
-
-    welcomeTL.to("#welcomeTitle", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8
+    // 🎵 START MUSIC
+    music.play().then(() => {
+        isPlaying = true;
+        musicButton.classList.remove("playing");
+    }).catch(() => {
+        console.log("Autoplay blocked");
     });
 
-    welcomeTL.to("#welcomeText", {
-        opacity: 1,
-        y: 0,
-        duration: 0.5
-    }, "-=0.01");
-
-    welcomeTL.fromTo("#enterButton",
-        { opacity: 0, scale: 0.9 },
-        { opacity: 1, scale: 1, duration: 0.6 }
-    );
-
-    document.getElementById("enterButton").onclick = () => {
-
-        gsap.to("#welcomeOverlay", {
-            opacity: 0,
-            duration: 1,
-            onComplete: () => {
-                document.getElementById("welcomeOverlay").style.display = "none";
-            }
-        });
+});
 
         const tl = gsap.timeline({ delay: 0.8 });
 
