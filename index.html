@@ -418,10 +418,80 @@
     		opacity:0;
     		transform:translateY(10px);
 	}
+		#musicButton {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #a855f7, #7c3aed);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer !important;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
+}
+
+.inner-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #9333ea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Pause Icon (default) */
+#icon {
+    width: 12px;
+    height: 14px;
+    position: relative;
+}
+
+#icon::before,
+#icon::after {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 14px;
+    background: white;
+}
+
+#icon::before {
+    left: 0;
+}
+
+#icon::after {
+    right: 0;
+}
+
+/* Play state */
+.playing #icon::before {
+    width: 0;
+}
+
+.playing #icon::after {
+    width: 0;
+}
+
+.playing #icon {
+    width: 0;
+    height: 0;
+    border-left: 12px solid white;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
     </style>
 </head>
 <body>
-
+<div id="musicButton">
+    <div class="inner-circle">
+        <div id="icon"></div>
+    </div>
+</div>
 <div id="cursor"></div>
 <div id="welcomeOverlay">
     <div class="welcomeContent">
@@ -1140,7 +1210,36 @@
 	initJar(true);
 
     }
+	const music = document.getElementById("bgMusic");
+const musicButton = document.getElementById("musicButton");
+
+let isPlaying = false;
+
+// Auto-play when jar loads (after user interaction)
+document.getElementById("enterButton").addEventListener("click", () => {
+    music.play().then(() => {
+        isPlaying = true;
+        musicButton.classList.remove("playing"); // pause icon
+    }).catch(() => {
+        console.log("Autoplay blocked");
+    });
+});
+
+// Toggle play/pause
+musicButton.addEventListener("click", () => {
+    if (isPlaying) {
+        music.pause();
+        musicButton.classList.add("playing"); // show play icon
+    } else {
+        music.play();
+        musicButton.classList.remove("playing"); // show pause icon
+    }
+    isPlaying = !isPlaying;
+});
 </script>
+<audio id="bgMusic" loop>
+    <source src="back-to-me.mp3" type="audio/mpeg">
+</audio>
 </body>
 
 </html>
