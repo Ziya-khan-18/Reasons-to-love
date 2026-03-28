@@ -988,10 +988,9 @@
         });
     });
     const enterBtn = document.getElementById("enterButton");
+    enterBtn.addEventListener("click", () => {
 
-enterBtn.addEventListener("click", () => {
-
-    // existing animation
+    // Hide welcome screen
     gsap.to("#welcomeOverlay", {
         opacity: 0,
         duration: 1,
@@ -1000,7 +999,28 @@ enterBtn.addEventListener("click", () => {
         }
     });
 
-    // 🎵 START MUSIC
+    // Start rules + jar animation
+    const tl = gsap.timeline({ delay: 0.5 });
+
+    tl.to("#rulesTitle", { opacity: 1, y: 0, duration: 0.8 });
+    tl.to("#rulesText", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
+    tl.to({}, { duration: 2 });
+    tl.to("#rulesOverlay", { opacity: 0, duration: 1 });
+    tl.to("#mainContainer", { opacity: 1, duration: 1 });
+    tl.set("#rulesOverlay", { display: "none" });
+    tl.to("#mainHeader", { opacity: 1, y: 0, duration: 1 });
+    tl.to("#jarScene", { opacity: 1, y: 0, duration: 1 }, "-=0.5");
+    tl.to("#jarMotion", { y: -8, duration: 3, repeat: -1, yoyo: true });
+
+    // Initialize jar
+    initJar();
+
+    counter.innerText =
+        remaining === 0
+        ? "THE LAST REASON"
+        : `${remaining} REASONS REMAINING`;
+
+    // 🎵 Start music
     music.play().then(() => {
         isPlaying = true;
         musicButton.classList.remove("playing");
@@ -1009,29 +1029,6 @@ enterBtn.addEventListener("click", () => {
     });
 
 });
-
-        const tl = gsap.timeline({ delay: 0.8 });
-
-        tl.to("#rulesTitle", { opacity: 1, y: 0, duration: 0.8 });
-        tl.to("#rulesText", { opacity: 1, y: 0, duration: 0.5 }, "-=0.01");
-        tl.to({}, { duration: 3 });
-        tl.to("#rulesOverlay", { opacity: 0, duration: 1 });
-        tl.to("#mainContainer", { opacity: 1, duration: 1 });
-        tl.set("#rulesOverlay", { display: "none" });
-        tl.to("#mainHeader", { opacity: 1, y: 0, duration: 1.2 });
-        tl.to("#jarScene", { opacity: 1, y: 0, duration: 1.2 }, "-=0.8");
-        tl.to("#jarMotion", { y: -8, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut" }, "-=1");
-
-        initJar();
-
-        counter.innerText =
-        remaining === 0
-        ? "THE LAST REASON"
-        : `${remaining} REASONS REMAINING`;
-    };
-
-};
-
     function initJar(isReset = false) {
         const visualPaperCount = 365;
         const jarWidth = 340;
@@ -1201,16 +1198,6 @@ const musicButton = document.getElementById("musicButton");
 
 let isPlaying = false;
 
-// Auto-play when jar loads (after user interaction)
-document.getElementById("enterButton").addEventListener("click", () => {
-    music.play().then(() => {
-        isPlaying = true;
-        musicButton.classList.remove("playing"); // pause icon
-    }).catch(() => {
-        console.log("Autoplay blocked");
-    });
-});
-
 // Toggle play/pause
 musicButton.addEventListener("click", () => {
     if (isPlaying) {
@@ -1222,10 +1209,12 @@ musicButton.addEventListener("click", () => {
     }
     isPlaying = !isPlaying;
 });
+gsap.to("#welcomeTitle", { opacity: 1, y: 0, duration: 1 });
+gsap.to("#welcomeText", { opacity: 1, y: 0, duration: 1, delay: 0.3 });
+gsap.to("#enterButton", { opacity: 1, y: 0, duration: 1, delay: 0.6 });
 </script>
 </body>
 
 </html>
-
 
 
