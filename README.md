@@ -110,7 +110,7 @@ Running the Project
 
 Simply open the file:
 
-Him.html
+index.html
 
 in any modern browser.
 
@@ -147,7 +147,7 @@ All animations are controlled using GSAP timelines in the script.
 
 File Structure
 project/
- └── Him.html
+ └── index.html
 
 The entire experience is contained in a single file for simplicity.
 
