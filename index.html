@@ -556,7 +556,11 @@
 <div id="copyright">
     © 2026 — Made for Nir.
 </div>
+<audio id="bgMusic" loop>
+    <source src="back-to-me.mp3" type="audio/mpeg">
+</audio>
 
+<script>
 <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playPopSound() {
@@ -1237,9 +1241,6 @@ musicButton.addEventListener("click", () => {
     isPlaying = !isPlaying;
 });
 </script>
-<audio id="bgMusic" loop>
-    <source src="back-to-me.mp3" type="audio/mpeg">
-</audio>
 </body>
 
 </html>
